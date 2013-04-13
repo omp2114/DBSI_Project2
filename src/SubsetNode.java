@@ -67,13 +67,18 @@ public class SubsetNode {
 	}
 	
 	/**set the right child */
-	public void serR(SubsetNode r){
+	public void setR(SubsetNode r){
 		R = r;
 	}
 	
 	/** get the current cost */
 	public double getC(){
 		return c;
+	}
+	
+	/** get the whether no-branching algorithm was used */
+	public boolean getB(){
+		return b;
 	}
 	
 	/**get the product of selectivites */
