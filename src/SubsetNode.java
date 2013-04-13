@@ -36,7 +36,7 @@ public class SubsetNode {
 		
 	}
 	
-	public SubsetNode(int n, boolean b, double p, double c, SubsetNode l, SubsetNode r){
+	public SubsetNode(int n, double p, boolean b, double c, SubsetNode l, SubsetNode r){
 		this.n = n;
 		this.b = b;
 		this.p = p;
@@ -45,7 +45,7 @@ public class SubsetNode {
 		R = r;
 	}
 	
-	public SubsetNode(int n, boolean b, double p, double c){
+	public SubsetNode(int n, double p, boolean b, double c){
 		this.n = n;
 		this.b = b;
 		this.p = p;
@@ -77,6 +77,11 @@ public class SubsetNode {
 	/**set the right child */
 	public void setR(SubsetNode r){
 		R = r;
+	}
+	
+	/**get number of elements in subset */
+	public double getN(){
+		return n;
 	}
 	
 	/** get the current cost */
