@@ -6,10 +6,15 @@
  *	the current best cost c for the subset; 
  *	the left child Land right child R of the subplans giving the best cost. L and R range over indexes for A[], and are initialized to null;
  */
-public class SubsetNode {
+import java.util.Arrays;
+
+public class SubsetNode implements Comparable {
 	
 	/** The number n of basic terms in the corresponding subset */
 	private int n; 
+	
+	/** The ArrayList representing the selectivities */
+	private double[] selectivities;
 	
 	/** The product p of the selectivities of all terms in the subset */
 	private double p;
@@ -36,22 +41,28 @@ public class SubsetNode {
 		
 	}
 	
-	public SubsetNode(int n, double p, boolean b, double c, SubsetNode l, SubsetNode r){
+	public SubsetNode(int n, double p, boolean b, double c, SubsetNode l, SubsetNode r, double[] s){
 		this.n = n;
 		this.b = b;
 		this.p = p;
 		this.c = c;
 		L = l;
 		R = r;
+		selectivities = s;
 	}
 	
-	public SubsetNode(int n, double p, boolean b, double c){
+	public SubsetNode(int n, double p, boolean b, double c, double[] s){
 		this.n = n;
 		this.b = b;
 		this.p = p;
 		this.c = c;
 		L = null;
 		R = null;
+		selectivities = s;
+	}
+	
+	public String toString(){
+		return "n: " + n + "| b: " + b + "| p: " + p + " | c: " + c + " | L: " + L + " | R: " + R + Arrays.toString(this.selectivities) + "\n" ;
 	}
 	
 	/**set the number of elements in subset */
@@ -106,5 +117,17 @@ public class SubsetNode {
 	/** get right child */
 	public SubsetNode getR(){
 		return R;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		SubsetNode s = (SubsetNode)o;
+		// TODO Auto-generated method stub
+		if(n > s.n)
+			return 1;
+		else if( n < s.n)
+			return -1;
+		else
+			return 0;
 	}
 }
