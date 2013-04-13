@@ -55,7 +55,7 @@ public class SubsetNode {
 	}
 	
 	public String toString(){
-		return "n: " + n + "| b: " + b + "| p: " + p + " | c: " + c + " | L: " + L + " | R: " + R  ;
+		return "n: " + n + "| b: " + b + "| p: " + p + " | c: " + c + " | L: " + L + " | R: " + R + "\n" ;
 	}
 	public int compare(SubsetNode s){
 		if(n > s.n)
