@@ -54,6 +54,18 @@ public class SubsetNode {
 		R = null;
 	}
 	
+	public String toString(){
+		return "n: " + n + "| b: " + b + "| p: " + p + " | c: " + c + " | L: " + L + " | R: " + R  ;
+	}
+	public int compare(SubsetNode s){
+		if(n > s.n)
+			return 1;
+		else if( n < s.n)
+			return -1;
+		else
+			return 0;
+	}
+	
 	/**set the number of elements in subset */
 	public void setN(int N){
 		n = N;
