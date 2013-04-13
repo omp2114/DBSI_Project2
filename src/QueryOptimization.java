@@ -15,36 +15,35 @@ public class QueryOptimization {
 		k = (int) Math.pow(2, s.size());
 		S = new SubsetNode[k];
 		current = 0;
-	    for(int i=0; i<=selectivities.length; i++){
-	    	double[] newSet = new double[i];
-	  	    createSubsets(selectivities, newSet, 0, 0);
-	    }
-	    /********************* PRINT S HERE TO TEST ********************/
-	    System.out.println(Arrays.toString(S));
-		
+		for(int i=0; i<=selectivities.length; i++){
+			double[] newSet = new double[i];
+			createSubsets(selectivities, newSet, 0, 0);
+		}
+		/********************* PRINT S HERE TO TEST ********************/
+		System.out.println(Arrays.toString(S));
+
 	}
 
 	private void createSubsets(double[] currentSet, double[] newSet,  int index, int length) {
-	    if (length != newSet.length) {
-	    	 for (int i = index; i < currentSet.length; i++) {
-		            newSet[length] = currentSet[i];
-		            createSubsets(currentSet, newSet, i + 1, length + 1);
-		        }
-	    
-	    } else {
-	    	double p = 1;
-	    	if(newSet.length==0){
-	    		 p = 0;
-	    	}
-			for(int i=0; i<newSet.length; i++){
-					p = p * newSet[i];
+		if (length < newSet.length) {
+			for (int i = index; i < currentSet.length; i++) {
+				newSet[length] = currentSet[i];
+				createSubsets(currentSet, newSet, i + 1, length + 1);
 			}
-		    S[current++] = new SubsetNode (newSet.length, p, false, 0);
-	    }
+		} else {
+			double p = 1;
+			if(newSet.length==0){
+				p = 0;
+			}
+			for(int i=0; i<newSet.length; i++){
+				p = p * newSet[i];
+			}
+			S[current++] = new SubsetNode (newSet.length, p, false, 0);
+		}
 	}
-	
-/**	Test class here
- * public static void main(String[] args) {
+
+	/**	Test class here
+	 * public static void main(String[] args) {
 		ArrayList<Double> d = new ArrayList<Double>();
 		d.add(0.3);
 		d.add(0.4);
@@ -53,6 +52,6 @@ public class QueryOptimization {
 		d.add(0.9);
 		QueryOptimization q = new QueryOptimization(d);
 	} 
-	
-	**/
+
+	 **/
 }
