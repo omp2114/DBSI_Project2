@@ -15,16 +15,12 @@ public class QueryOptimization {
 		S = new SubsetNode[k];
 		current = 0;
 	    for(int i=0; i<=selectivities.length; i++){
-	    	addSubsetsToS(selectivities, i);
+	    	double[] newSet = new double[i];
+	  	    createSubsets(selectivities, newSet, 0, 0);
 	    }
 	    /********************* PRINT S HERE TO TEST ********************/
 	    System.out.println(Arrays.toString(S));
 		
-	}
-
-	private void addSubsetsToS(double[] selectivities, int k) {
-	    double[] newSet = new double[k];
-	    createSubsets(selectivities, newSet, 0, 0);
 	}
 
 	private void createSubsets(double[] currentSet, double[] newSet,  int index, int length) {
@@ -37,16 +33,9 @@ public class QueryOptimization {
 	    } else {
 	    	double p = 1;
 			for(int i=0; i<=newSet.length; i++){
-					p = p * newSet[i];
+					p *= newSet[i];
 			}
 		    S[current++] = new SubsetNode (newSet.length, p, false, 0);
 	    }
 	}
-
-	
-	
-
-
-
-	
 }
