@@ -43,7 +43,15 @@ public class SubsetNode {
 		this.c = c;
 		L = l;
 		R = r;
+	}
 	
+	public SubsetNode(int n, boolean b, double p, double c){
+		this.n = n;
+		this.b = b;
+		this.p = p;
+		this.c = c;
+		L = null;
+		R = null;
 	}
 	
 	/**set the number of elements in subset */
