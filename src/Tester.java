@@ -34,14 +34,8 @@ public class Tester {
 				selectivities.add(s);
 				threadNumber ++;
 			}
-//			for (int i = 0; i < selectivities.size(); i++) {
-//				ArrayList<Double> current = selectivities.get(i);
-//				for (int j = 0; j < current.size(); j++) {
-//					System.out.print(current.get(j) + " ");
-//				}
-//				System.out.println();
-//			}
-//			
+			
+			// Splits the queries into threads to handle them in parallel
 			for (int i = 0; i < threadNumber; i++) {
 				Thread newThread = new Optimize(selectivities.get(i));
 				newThread.start();
