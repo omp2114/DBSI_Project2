@@ -14,16 +14,19 @@ public class Tester {
 		
 		// Read in the Query Files
 		File infile = new File(args[0]);
+		File configFile = new File(args[1]);
 		
 		// Create an array list to store an array list of selectivities
 		ArrayList<ArrayList<Double>> selectivities = new ArrayList<ArrayList<Double>>();
-		
+		int t, l, m, r, f, a;
 		// Counting the number of threads
 		int threadNumber = 0;
 		try {
 			
 			Scanner input = new Scanner(infile);
-
+			Scanner configInput = new Scanner(configFile);
+			
+			// Read in the query selectivities
 			while (input.hasNextLine()) {
 				ArrayList<Double> s = new ArrayList<Double>(); 
 				String line = input.nextLine();
@@ -35,30 +38,51 @@ public class Tester {
 				threadNumber ++;
 			}
 			
+			// Read in the cost values
+			for (int i = 0; i < 6; i++) {
+				if (i == 0) {
+					configInput.next();
+					configInput.next();
+					r = configInput.nextInt();
+					System.out.println("r is: " + r);
+				} else if (i == 1) {
+					configInput.next();
+					configInput.next();
+					t = configInput.nextInt();
+					System.out.println("t is: " + t);
+
+				} else if (i == 2) {
+					configInput.next();
+					configInput.next();
+					l = configInput.nextInt();
+					System.out.println("l is: " + l);
+
+				} else if (i == 3) {
+					configInput.next();
+					configInput.next();
+					m = configInput.nextInt();
+					System.out.println("m is: " + m);
+
+				} else if (i == 4) {
+					configInput.next();
+					configInput.next();
+					a = configInput.nextInt();
+					System.out.println("a is: " + a);
+
+				} else if (i == 5) {
+					configInput.next();
+					configInput.next();
+					f = configInput.nextInt();
+					System.out.println("f is: " + f);
+
+				}
+			}
+			
 			// Splits the queries into threads to handle them in parallel
 			//for (int i = 0; i < threadNumber; i++) {
-			Thread newThread = new Optimize(selectivities.get(1));
+			Thread newThread = new Optimize(selectivities.get(1), t, l, m, r, f, a);
 			newThread.start();
-//			/
-//				int n = (int) Math.pow(2, selectivities.get(1).size());
-//				int size = Integer.toBinaryString(n).length()-1;
-//				System.out.println(Integer.toBinaryString(0).length());
-//				String[] temp = new String[n];
-//				
-//				for (int i = 0; i < n; i++) {
-//					String outputstr ="";
-//					temp[i] = Integer.toBinaryString(i);
-//					while (temp[i].length() < size) {
-//							temp[i] = '0' + temp[i];
-//					}
-//					for (int j = 0; j < temp[i].length(); j++) {
-//						int temp1 = Integer.valueOf(temp[i].substring(j, j+1));
-//						temp1 = (j +1) * temp1;
-//						outputstr += temp1;
-//					}
-//					
-//					System.out.println(outputstr);
-//				}
+
 			
 			
 			
