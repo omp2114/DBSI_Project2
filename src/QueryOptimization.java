@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class QueryOptimization {
 	private double[] selectivities;
 	private ArrayList<SubsetNode> S;
-	private int k;
+	private int r,t,l,m,f,a,k;
 
 	public QueryOptimization(ArrayList<Double> s) {
 		selectivities = new double[s.size()];
@@ -24,6 +24,10 @@ public class QueryOptimization {
 		Collections.sort(S);
 		System.out.println(Arrays.toString(S.toArray()));
 
+	}
+	public double calculateFixedCost(int fterms) {
+		double fcost = k * r + (k-1) * r + fterms*f;
+		return f;
 	}
 	public ArrayList<ArrayList<Double>> getSubsets(){
 		System.out.println("Creating substests");

@@ -18,7 +18,7 @@ public class Tester {
 		
 		// Create an array list to store an array list of selectivities
 		ArrayList<ArrayList<Double>> selectivities = new ArrayList<ArrayList<Double>>();
-		int t, l, m, r, f, a;
+		int t=0, l=0, m=0, r=0, f=0, a =0;
 		// Counting the number of threads
 		int threadNumber = 0;
 		try {
@@ -80,7 +80,7 @@ public class Tester {
 			
 			// Splits the queries into threads to handle them in parallel
 			//for (int i = 0; i < threadNumber; i++) {
-			Thread newThread = new Optimize(selectivities.get(1), t, l, m, r, f, a);
+			Thread newThread = new Optimize(selectivities.get(1),t, l, m, r, f, a);
 			newThread.start();
 
 			
