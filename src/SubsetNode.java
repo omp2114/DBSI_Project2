@@ -7,12 +7,14 @@
  *	the left child Land right child R of the subplans giving the best cost. L and R range over indexes for A[], and are initialized to null;
  */
 import java.util.Arrays;
+import java.util.Set;
 
 public class SubsetNode implements Comparable {
 	
 	/** The number n of basic terms in the corresponding subset */
 	private int n; 
 	
+	private Set<Integer> indices;
 	/** The ArrayList representing the selectivities */
 	private double[] selectivities;
 	
@@ -41,33 +43,41 @@ public class SubsetNode implements Comparable {
 		
 	}
 	
-	public SubsetNode(int n, double p, boolean b, double c, SubsetNode l, SubsetNode r, double[] s){
+	public SubsetNode(int n, double p, boolean b, double c, SubsetNode l, SubsetNode r, double[] s, Set<Integer> I){
 		this.n = n;
 		this.b = b;
 		this.p = p;
-		this.c = c;
+		//this.c = c;
+		this.c = Double.POSITIVE_INFINITY;
 		L = l;
 		R = r;
 		selectivities = s;
+		this.indices = I;
 	}
 	
-	public SubsetNode(int n, double p, boolean b, double c, double[] s){
+	public SubsetNode(int n, double p, boolean b, double c, double[] s,  Set<Integer> I){
 		this.n = n;
 		this.b = b;
 		this.p = p;
-		this.c = c;
+//		this.c = c;
+		this.c = Double.POSITIVE_INFINITY;
 		L = null;
 		R = null;
 		selectivities = s;
+		indices = I;
 	}
 	
 	public String toString(){
-		return "n: " + n + "| b: " + b + "| p: " + p + " | c: " + c + " | L: " + L + " | R: " + R + Arrays.toString(this.selectivities) + "\n" ;
+		return "n: " + n + "| b: " + b + "| p: " + p + " | c: " + c + " | L: " + L + " | R: " + R + Arrays.toString(this.selectivities) + Arrays.toString(indices.toArray(new Integer[indices.size()])) + "\n" ;
 	}
 	
 	/**set the number of elements in subset */
 	public void setN(int N){
 		n = N;
+	}
+	
+	public void setC(double C) {
+		this.c = C;
 	}
 
 	/** set no-branching boolean */
@@ -109,6 +119,11 @@ public class SubsetNode implements Comparable {
 	public double getP(){
 		return p;
 	}
+	
+	public Set<Integer> getIndices(){
+		return indices;
+	}
+	
 	
 	/** get left child */
 	public SubsetNode getL(){

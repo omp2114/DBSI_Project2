@@ -10,23 +10,32 @@ public class QueryOptimization {
 	private double[] selectivities;
 	private ArrayList<SubsetNode> S;
 	private int r,t,l,m,f,a,k;
-
-	public QueryOptimization(ArrayList<Double> s) {
+	private ArrayList<ArrayList<Integer>> indices;
+	public QueryOptimization(ArrayList<Double> s,int R, int T,int L,int M,int F,int A) {
 		selectivities = new double[s.size()];
 		for(int i=0; i<s.size(); i++){
 			selectivities[i] = s.get(i);
 		}
 		k = (int) Math.pow(2, s.size());
 		S = new ArrayList<SubsetNode>();
+		r = R;
+		t = T;
+		l = L;
+		m = M;
+		f = F;
+		a = A;
 		createNodes(getSubsets());
-		
 		/********************* PRINT S HERE TO TEST ********************/
-		Collections.sort(S);
+	
 		System.out.println(Arrays.toString(S.toArray()));
 
 	}
 	public double calculateFixedCost(SubsetNode node) {
-		double fcost = k * r + (k-1) * r + node.getN()*f;
+//		System.out.println("NODE.N: " + node.getN());
+//		System.out.println("r: " + r);
+//		System.out.println("a: " + a);
+		double fcost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + a;
+//		System.out.println("FCOST: " + fcost);
 		return fcost;
 	}
 	public double cMetric(SubsetNode node) {
@@ -43,41 +52,92 @@ public class QueryOptimization {
 			return node.getL();
 		}
 	}
-	public boolean dDominate(SubsetNode left, SubsetNode right) {
 	
-		return true;
+	/*
+	 * Starts at the leftmost node and moves right. If the leftmost is the only node
+	 * there then it returns false. Else if another node dominates left, it will return true.
+	 */
+	public boolean dDominate(SubsetNode left, SubsetNode leftMost) {
+		if (leftMost.getR() == null && leftMost.getL() == null) {
+			return false;
+		} else if (dMetric(leftMost) > dMetric(left)) {
+			return (true || dDominate(left, leftMost.getR())); 
+		} else {
+			return (false || dDominate(left, leftMost.getR()));
+		}
 	}
+	
+	/*
+	 * Finds the node that corresponds to the union of both nodes.
+	 */
 	public SubsetNode nodeUnion(SubsetNode left, SubsetNode right) {
 		double newp = left.getP() * right.getP();
 		double newn = left.getN() + right.getN();
+		Set<Integer> union = new HashSet<Integer>(left.getIndices());
+		union.addAll(right.getIndices());
 		SubsetNode unionNode = null;
 		for (int i = 0; i < S.size(); i++) {
-			if (S.get(i).getN() == newn && S.get(i).getP() == newp) {
+			Set<Integer> difference = new HashSet<Integer>(union);
+			difference.removeAll(S.get(i).getIndices());
+			if (difference.size() == 0 ) {
 				unionNode = S.get(i);
 			}
 		}
-		
-		
+//		System.out.println(left);
+//		System.out.println(right);
+//		System.out.println(unionNode);
 		return unionNode;
 	}
 	
 	public void pruneConditionTwoA(SubsetNode left, SubsetNode right) {
 		if (cMetric(left) < cMetric(leftMost(right))) {
 			/* Do nothing */
-		} else if (left.getP() <= 0.5) {
+			System.out.println("PRUNED!: CMETRIC");
+			System.out.println(left + "CMETRIC: " + cMetric(left));
+			System.out.println(right+ "CMETRIC: " + cMetric(right));
+		} else if (left.getP() <= 0.5 && dDominate(left, leftMost(right))) {
 			/* Do nothing */
+			System.out.println("PRUNED!: DMETRIC");
+			System.out.println(left);
+			System.out.println(right);
+
 		} else {
+			SubsetNode unionNode = nodeUnion(left, right);
+			if (unionNode == null) {
+				System.out.println("UNION NODE IS NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+			}
 			double cost = this.calculateFixedCost(left) + m * Math.min(left.getP(), 1-left.getP()) +
 					left.getP() * this.calculateFixedCost(right);
-			//if (cost <)
+			if (cost < unionNode.getC()) {
+				unionNode.setC(cost);
+				unionNode.setL(left);
+				unionNode.setR(right);
+			}
 			
 		}
 		
 	}
+	public void pruneConditionTwo() {
+		System.out.println("Prunning");
+		for (int i = 1; i < S.size(); i ++) {
+			SubsetNode right = S.get(i);
+//			System.out.println(i);
+			for (int j = 1; j < S.size(); j++) {
+				SubsetNode left = S.get(j);
+//				System.out.println(j);
+				Set<Integer> intersection = new HashSet<Integer>(right.getIndices());
+				intersection.retainAll(left.getIndices());
+				if (intersection.size() == 0) {
+					pruneConditionTwoA(left, right);
+				}
+			}
+		}
+	}
 	public ArrayList<ArrayList<Double>> getSubsets(){
 		System.out.println("Creating substests");
 		ArrayList<ArrayList<Double>> subsets = new ArrayList<ArrayList<Double>>();
-	
+		this.indices = new ArrayList<ArrayList<Integer>>();
+
 		/* 
 		 * Weird algorithm. We had a lot of difficulty trying to come up with an algorithm. We realized
 		 * That bitstrings could easily represent unique subsets and used it to our advantage.
@@ -89,6 +149,8 @@ public class QueryOptimization {
 		
 		for (int i = 0; i < n; i++) {
 			ArrayList<Double> current = new ArrayList<Double>();
+			ArrayList<Integer> currentIndices = new ArrayList<Integer>();
+
 			temp[i] = Integer.toBinaryString(i);
 			while (temp[i].length() < size) {
 					temp[i] = '0' + temp[i];
@@ -98,9 +160,11 @@ public class QueryOptimization {
 				temp1 = (j +1) * temp1;
 				if (temp1 > 0) {
 					current.add(selectivities[temp1-1]);
+					currentIndices.add(temp1);
 				}
 			}
 			subsets.add(current);
+			this.indices.add(currentIndices);
 		}
 		System.out.println("Finished");
 		return subsets;
@@ -134,10 +198,18 @@ public class QueryOptimization {
 			for (int m = 0; m < sarray.length; m++) {
 				rarray[m] = (double)sarray[m];
 			}
-			S.add(new SubsetNode (newSet.size(), p, false, 0, rarray));	
+			Set<Integer> indiceSet = new HashSet<Integer>();
+			for (int k = 0; k < newSet.size(); k++) {
+				indiceSet.addAll(this.indices.get(i));
+			}
+			S.add(new SubsetNode (newSet.size(), p, false, 0, rarray, indiceSet));	
 		}
-		System.out.println("Finished Creating NOdes");
-		//System.out.println(output);
+		Collections.sort(S);
+		this.pruneConditionTwo();
+//		System.out.println("Testing DMetric Node");
+//		System.out.println(this.dMetric(S.get(1)) +  this.dMetric(S.get(2)));
+//		System.out.println("Finished Creating NOdes");
+//		//System.out.println(output);
 	}
 
 	/**	Test class here

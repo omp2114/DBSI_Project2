@@ -21,7 +21,7 @@ public class Optimize extends Thread {
 	
 	
 	public void run() {
-		QueryOptimization optimizer = new QueryOptimization(selectivities);
+		QueryOptimization optimizer = new QueryOptimization(selectivities, r,t,l,m,f,a);
 
 	}
 	
