@@ -118,6 +118,10 @@ public class SubsetNode implements Comparable {
 	public SubsetNode getR(){
 		return R;
 	}
+	/** get right child */
+	public double[] getSelectivities(){
+		return selectivities;
+	}
 
 	@Override
 	public int compareTo(Object o) {

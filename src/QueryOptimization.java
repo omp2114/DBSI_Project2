@@ -25,9 +25,54 @@ public class QueryOptimization {
 		System.out.println(Arrays.toString(S.toArray()));
 
 	}
-	public double calculateFixedCost(int fterms) {
-		double fcost = k * r + (k-1) * r + fterms*f;
-		return f;
+	public double calculateFixedCost(SubsetNode node) {
+		double fcost = k * r + (k-1) * r + node.getN()*f;
+		return fcost;
+	}
+	public double cMetric(SubsetNode node) {
+		return (node.getP() -1)/(calculateFixedCost(node));
+	}
+	public double dMetric(SubsetNode node) {
+		return calculateFixedCost(node);
+	}
+	
+	public SubsetNode leftMost(SubsetNode node) {
+		if (node.getL() == null) {
+			return node;
+		} else {
+			return node.getL();
+		}
+	}
+	public boolean dDominate(SubsetNode left, SubsetNode right) {
+	
+		return true;
+	}
+	public SubsetNode nodeUnion(SubsetNode left, SubsetNode right) {
+		double newp = left.getP() * right.getP();
+		double newn = left.getN() + right.getN();
+		SubsetNode unionNode = null;
+		for (int i = 0; i < S.size(); i++) {
+			if (S.get(i).getN() == newn && S.get(i).getP() == newp) {
+				unionNode = S.get(i);
+			}
+		}
+		
+		
+		return unionNode;
+	}
+	
+	public void pruneConditionTwoA(SubsetNode left, SubsetNode right) {
+		if (cMetric(left) < cMetric(leftMost(right))) {
+			/* Do nothing */
+		} else if (left.getP() <= 0.5) {
+			/* Do nothing */
+		} else {
+			double cost = this.calculateFixedCost(left) + m * Math.min(left.getP(), 1-left.getP()) +
+					left.getP() * this.calculateFixedCost(right);
+			//if (cost <)
+			
+		}
+		
 	}
 	public ArrayList<ArrayList<Double>> getSubsets(){
 		System.out.println("Creating substests");
