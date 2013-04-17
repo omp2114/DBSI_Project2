@@ -20,7 +20,7 @@ public class Optimize extends Thread {
 		QueryOptimization optimizer = new QueryOptimization(selectivities, r,t,l,m,f,a);
 		optimizer.partOne();
 		optimizer.pruneConditionTwo();
-		//System.out.println(optimizer.printOp());
+		System.out.println(optimizer.printOp());
 
 	}
 	

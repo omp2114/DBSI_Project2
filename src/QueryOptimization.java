@@ -24,9 +24,7 @@ public class QueryOptimization {
 		m = M;
 		f = F;
 		a = A;
-		createNodes(getSubsets());
-		/********************* PRINT S HERE TO TEST ********************/
-	
+		createNodes(getSubsets());	
 		System.out.println(Arrays.toString(S.toArray()));
 
 	}
@@ -215,16 +213,6 @@ public class QueryOptimization {
 		}
 		System.out.println("Finished");
 		return subsets;
-// Code to test subset code
-//		String output = "";
-//		for (int i = 0; i < subsets.size(); i++) {
-//			ArrayList<Double> current = subsets.get(i);
-//			for (int j = 0; j < current.size(); j++) {
-//				output += current.get(j);
-//			}
-//			output += '\n';
-//		}
-//		System.out.println(output);
 	}
 	
 	private void createNodes(ArrayList<ArrayList<Double>> sets) {
@@ -256,17 +244,5 @@ public class QueryOptimization {
 	public String printOp() {
 		return S.get(S.size()-1).printOptimalPlan();
 	}
-	
-	/**	Test class here
-	 * public static void main(String[] args) {
-		ArrayList<Double> d = new ArrayList<Double>();
-		d.add(0.3);
-		d.add(0.4);
-		d.add(0.6);
-		d.add(0.7);
-		d.add(0.9);
-		QueryOptimization q = new QueryOptimization(d);
-	} 
 
-	 **/
 }
