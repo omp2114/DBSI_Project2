@@ -15,6 +15,7 @@ public class SubsetNode implements Comparable {
 	private int n; 
 	
 	private Set<Integer> indices;
+	
 	/** The ArrayList representing the selectivities */
 	private double[] selectivities;
 	
@@ -136,6 +137,70 @@ public class SubsetNode implements Comparable {
 	/** get right child */
 	public double[] getSelectivities(){
 		return selectivities;
+	}
+	
+	public String printOptimalPlan() {
+		String out = "======================================\n";
+		String ifs = "if(";
+		String branch = "answer[j] = i; + '\n'" + "j += ";
+		out += Arrays.toString(selectivities) + '\n';
+		out += "--------------------------------------\n";
+		out += recursivePrint(this, out, 1, branch, ifs);
+		out += "--------------------------------------\n";
+		out += "cost =" + this.c + '\n';
+		return out;
+	}
+	
+	public SubsetNode leftMost(SubsetNode node) {
+		if (node.getL() == null) {
+			return node;
+		} else {
+			return node.getL();
+		}
+	}
+	
+	private String recursivePrint(SubsetNode optimal, String out, int current, String branch, String ifs) {
+		if (optimal.getR() == null) {
+			String temp = "answer[j] = i; + '\n'" + "j += ";
+			String cString = "";
+			if (ifs.length() > 3) {
+				cString += ifs + ") {" + '\n';
+			}
+			if (branch.length() > temp.length()) {
+				cString += branch + '\n' + "}";
+			} else {
+				cString += '\n' + "answer[j++] = i; '\n'" + "}"; 
+			}
+			System.out.println("IF STRINGGFGGGGG" + ifs);
+			return cString;
+		}
+		String ifstring = "";
+		String bstring = "";
+		if (this.getB() == true) {
+			for (int i = 0; i < optimal.getN(); i++) {
+				bstring += "t" + (current + i + 1) + "[o" + (current + i + 1) + "[i]] & ";  
+			}
+		} else {
+			System.out.println("MAKING IF");
+			if (optimal.getN() == 1) {
+				ifstring += "t" + + (current + 1) + "[o" + (current + 1) +"[i]] && " ;
+			} else {
+				ifstring += "(";
+				for (int i = 0; i < optimal.getN(); i++) {
+					
+					// We dont want a final and so we do a condition for i = length-1;
+					if (i == optimal.getN()-1) {
+						ifstring +=  "t" + + (current + i+ 1) + "[o" + (current + i + 1) +"[i]]" ;
+					} else {
+						ifstring +=  "t" + + (current + i+ 1) + "[o" + (current + i + 1) +"[i]] & " ;
+					}
+				}
+				ifstring += ") &&";
+			}	
+		}
+		String rif = ifs + ifstring;
+		String rb = branch + bstring;
+		return recursivePrint(optimal.getR(), out, (int)(current + optimal.getN()), rb, rif) ;
 	}
 
 	@Override

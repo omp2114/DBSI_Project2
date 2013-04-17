@@ -31,11 +31,7 @@ public class QueryOptimization {
 
 	}
 	public double calculateFixedCost(SubsetNode node) {
-//		System.out.println("NODE.N: " + node.getN());
-//		System.out.println("r: " + r);
-//		System.out.println("a: " + a);
 		double fcost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + t;
-//		System.out.println("FCOST: " + fcost);
 		return fcost;
 	}
 	public double cMetric(SubsetNode node) {
@@ -49,7 +45,7 @@ public class QueryOptimization {
 		if (node.getL() == null) {
 			return node;
 		} else {
-			return node.getL();
+			return leftMost(node.getL());
 		}
 	}
 	
@@ -83,9 +79,8 @@ public class QueryOptimization {
 				unionNode = S.get(i);
 			}
 		}
-//		System.out.println(left);
-//		System.out.println(right);
-//		System.out.println(unionNode);
+
+		
 		return unionNode;
 	}
 	
@@ -100,6 +95,8 @@ public class QueryOptimization {
 			else
 				S.get(i).setC(cost1);
 		}
+		System.out.println("PART ONE-----------------------------------------");
+		System.out.println(S);
 	}
 	public double calculateNoBranchCost(SubsetNode node) {
 		double cost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + a;
@@ -109,7 +106,7 @@ public class QueryOptimization {
 		double p = 0; 
 		double q = 0;
 		if (s.getN() * s.getP() <= 0.5){
-			q = s.getP() * s.getN(); //system predicts the branch to the next iteration will be take
+			q = s.getP() * s.getN(); 
 		}else{
 			q = 1 - s.getP() * s.getN();
 		}
@@ -121,15 +118,8 @@ public class QueryOptimization {
 	public void pruneConditionTwoA(SubsetNode left, SubsetNode right) {
 		if (cMetric(left) < cMetric(leftMost(right) )) {
 			/* Do nothing */
-//			System.out.println("PRUNED!: CMETRIC");
-//			System.out.println(left + "CMETRIC: " + cMetric(left));
-//			System.out.println(right+ "CMETRIC: " + cMetric(right));
 		} else if (left.getP() <= 0.5 && dDominate(left, leftMost(right))) {
 			/* Do nothing */
-//			System.out.println("PRUNED!: DMETRIC");
-//			System.out.println(left);
-//			System.out.println(right);
-
 		} else {
 			SubsetNode unionNode = nodeUnion(left, right);
 
@@ -157,6 +147,8 @@ public class QueryOptimization {
 				}
 			}
 		}
+		System.out.println("PART TWO-----------------------------------------");
+		System.out.println(S);
 	}
 	public ArrayList<ArrayList<Double>> getSubsets(){
 		System.out.println("Creating substests");
@@ -204,7 +196,7 @@ public class QueryOptimization {
 //		}
 //		System.out.println(output);
 	}
-
+	
 	private void createNodes(ArrayList<ArrayList<Double>> sets) {
 		System.out.println("Creating Nodes");
 		for (int i = 0; i < sets.size(); i++) {
@@ -217,7 +209,6 @@ public class QueryOptimization {
 				p = p * newSet.get(k);
 			}
 			Object[] temp = newSet.toArray();	
-			//ouble[] sarray = new double[temp.length];
 			Double[] sarray = Arrays.copyOf(temp, temp.length, Double[].class);
 			double[] rarray = new double[sarray.length];
 			for (int m = 0; m < sarray.length; m++) {
@@ -230,13 +221,12 @@ public class QueryOptimization {
 			S.add(new SubsetNode (newSet.size(), p, false, 0, rarray, indiceSet));	
 		}
 		Collections.sort(S);
-		this.pruneConditionTwo();
-//		System.out.println("Testing DMetric Node");
-//		System.out.println(this.dMetric(S.get(1)) +  this.dMetric(S.get(2)));
-//		System.out.println("Finished Creating NOdes");
-//		//System.out.println(output);
 	}
-
+	
+	public String printOp() {
+		return S.get(S.size()-1).printOptimalPlan();
+	}
+	
 	/**	Test class here
 	 * public static void main(String[] args) {
 		ArrayList<Double> d = new ArrayList<Double>();
