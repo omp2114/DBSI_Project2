@@ -117,7 +117,7 @@ public class QueryOptimization {
 		}
 		System.out.println("PART ONE-----------------------------------------");
 		System.out.println(this.nodeUnion(S.get(1), S.get(2)));
-		//System.out.println(S);
+		System.out.println(S);
 	}
 	public double calculateNoBranchCost(SubsetNode node) {
 		double cost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + a;
@@ -135,7 +135,14 @@ public class QueryOptimization {
 		return cost;
 	}
 	
-	
+	public double computePlanCost(SubsetNode right) {
+		if (right.getR() == null) {
+			return this.calculateFixedCost(right);
+		}
+		double cost = this.calculateFixedCost(right.getL()) + m * Math.min(right.getL().getP(), 1-right.getL().getP()) +
+				right.getL().getP() * this.computePlanCost(right.getR());
+		return cost;
+	}
 	public void pruneConditionTwoA(SubsetNode left, SubsetNode right) {
 		if (left.getP() >= right.getP() && cMetric(left) > cMetric(leftMost(right) )) {
 			/* Do nothing */
@@ -147,7 +154,7 @@ public class QueryOptimization {
 			SubsetNode unionNode = nodeUnion(left, right);
 
 			double cost = this.calculateFixedCost(left) + m * Math.min(left.getP(), 1-left.getP()) +
-					left.getP() * this.calculateFixedCost(right);
+					left.getP() * right.getC();
 			if (cost < unionNode.getC()) {
 				unionNode.setC(cost);
 				unionNode.setL(left);
