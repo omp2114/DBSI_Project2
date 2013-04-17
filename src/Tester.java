@@ -78,7 +78,7 @@ public class Tester {
 			}	
 			// Splits the queries into threads to handle them in parallel
 			//for (int i = 0; i < threadNumber; i++) {
-				Thread newThread = new Optimize(selectivities.get(1),t, l, m, r, f, a);
+				Thread newThread = new Optimize(selectivities.get(2),t, l, m, r, f, a);
 				newThread.start();
 		//	}	
 		} catch (FileNotFoundException e) {

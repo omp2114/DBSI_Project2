@@ -30,17 +30,32 @@ public class QueryOptimization {
 		System.out.println(Arrays.toString(S.toArray()));
 
 	}
+	
+	/*
+	 * Calculates the fixed cost for and & term
+	 */
 	public double calculateFixedCost(SubsetNode node) {
 		double fcost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + t;
 		return fcost;
 	}
+	
+	/*
+	 * Calculates the C-metric for an & term
+	 */
 	public double cMetric(SubsetNode node) {
 		return (node.getP() -1)/(calculateFixedCost(node));
 	}
+	
+	/*
+	 * Calculates the D-metric for an & term
+	 */
 	public double dMetric(SubsetNode node) {
 		return calculateFixedCost(node);
 	}
 	
+	/*
+	 * Find the leftmost node.
+	 */
 	public SubsetNode leftMost(SubsetNode node) {
 		if (node.getL() == null) {
 			return node;
@@ -50,16 +65,20 @@ public class QueryOptimization {
 	}
 	
 	/*
-	 * Starts at the leftmost node and moves right. If the leftmost is the only node
-	 * there then it returns false. Else if another node dominates left, it will return true.
+	 * Checks for d-metric domination on nodes other than the leftmost of the right. 
+	 * Left is the left node, right is the right node and leftmost is the leftmost of the right.
 	 */
-	public boolean dDominate(SubsetNode left, SubsetNode leftMost) {
-		if (leftMost.getL() == null && leftMost.getR() == null) {
+	public boolean dDominate(SubsetNode left, SubsetNode right, SubsetNode leftMost) {
+		Set<Integer> difference = new HashSet<Integer>(leftMost.getIndices());
+		difference.removeAll(right.getIndices());
+		
+		// If the set difference of the leftmost and right is 0, then we have the leftmost node and return false.
+		if (difference.size() == 0) {
 			return false;
-		} else if (dMetric(leftMost) > dMetric(left)) {
-			return (true || dDominate(left, leftMost.getR())); 
+		} else if (dMetric(right) > dMetric(left)) {
+			return (true); 
 		} else {
-			return (false || dDominate(left, leftMost.getR()));
+			return (false || dDominate(left, right.getR(), leftMost) || dDominate(left, right.getL(), leftMost));
 		}
 	}
 	
@@ -67,23 +86,24 @@ public class QueryOptimization {
 	 * Finds the node that corresponds to the union of both nodes.
 	 */
 	public SubsetNode nodeUnion(SubsetNode left, SubsetNode right) {
-		double newp = left.getP() * right.getP();
-		double newn = left.getN() + right.getN();
+		
+		// Union is done via a java hashset
 		Set<Integer> union = new HashSet<Integer>(left.getIndices());
 		union.addAll(right.getIndices());
 		SubsetNode unionNode = null;
 		for (int i = 0; i < S.size(); i++) {
-			Set<Integer> difference = new HashSet<Integer>(union);
-			difference.removeAll(S.get(i).getIndices());
+			Set<Integer> difference = new HashSet<Integer>(S.get(i).getIndices());
+			difference.removeAll(union);
 			if (difference.size() == 0 ) {
 				unionNode = S.get(i);
 			}
 		}
-
-		
 		return unionNode;
 	}
 	
+	/*
+	 * The first pruning step of the algorithm after the sets are created.
+	 */
 	public void partOne(){
 		for(int i = 0; i< S.size(); i++){
 			double cost1 = calcualteLogicalAndCost(S.get(i));
@@ -96,7 +116,8 @@ public class QueryOptimization {
 				S.get(i).setC(cost1);
 		}
 		System.out.println("PART ONE-----------------------------------------");
-		System.out.println(S);
+		System.out.println(this.nodeUnion(S.get(1), S.get(2)));
+		//System.out.println(S);
 	}
 	public double calculateNoBranchCost(SubsetNode node) {
 		double cost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + a;
@@ -105,20 +126,22 @@ public class QueryOptimization {
 	public double calcualteLogicalAndCost(SubsetNode s){
 		double p = 0; 
 		double q = 0;
-		if (s.getN() * s.getP() <= 0.5){
-			q = s.getP() * s.getN(); 
+		if (s.getP() <= 0.5){
+			q = s.getP(); 
 		}else{
-			q = 1 - s.getP() * s.getN();
+			q = 1 - s.getP();
 		}
-		double cost = s.getN() * r + (s.getN() - 1)* l + s.getN()*f + t + m * q + p* s.getN() * a;
+		double cost = s.getN() * r + (s.getN() - 1)* l + s.getN()*f + t + m * q + p* a;
 		return cost;
 	}
 	
 	
 	public void pruneConditionTwoA(SubsetNode left, SubsetNode right) {
-		if (cMetric(left) < cMetric(leftMost(right) )) {
+		if (left.getP() >= right.getP() && cMetric(left) > cMetric(leftMost(right) )) {
 			/* Do nothing */
-		} else if (left.getP() <= 0.5 && dDominate(left, leftMost(right))) {
+
+		} else if (left.getP() <= 0.5 && dDominate(left, right, leftMost(right))) {
+			System.out.println("PRUNED!");
 			/* Do nothing */
 		} else {
 			SubsetNode unionNode = nodeUnion(left, right);
