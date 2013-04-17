@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
 public class Tester {
 
 	/**
@@ -76,27 +75,16 @@ public class Tester {
 					System.out.println("f is: " + f);
 
 				}
-			}
-			
+			}	
 			// Splits the queries into threads to handle them in parallel
-			//for (int i = 0; i < threadNumber; i++) {
-			Thread newThread = new Optimize(selectivities.get(1),t, l, m, r, f, a);
-			newThread.start();
-
-			
-			
-			
+			for (int i = 0; i < threadNumber; i++) {
+				Thread newThread = new Optimize(selectivities.get(i),t, l, m, r, f, a);
+				newThread.start();
+			}	
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
-
 	}
 
 }

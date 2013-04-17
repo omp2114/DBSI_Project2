@@ -3,8 +3,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-
-
 public class Optimize extends Thread {
 	private ArrayList<Double> selectivities = new ArrayList<Double>();
 	private int r,t,l,m,f,a;
@@ -17,11 +15,11 @@ public class Optimize extends Thread {
 		m = m1;
 		f = f1;
 		a = a1;
-	}
-	
-	
+	}	
 	public void run() {
 		QueryOptimization optimizer = new QueryOptimization(selectivities, r,t,l,m,f,a);
+		optimizer.partOne();
+		optimizer.pruneConditionTwo();
 
 	}
 	
