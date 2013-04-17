@@ -89,6 +89,35 @@ public class QueryOptimization {
 		return unionNode;
 	}
 	
+	public void partOne(){
+		for(int i = 0; i< S.size(); i++){
+			double cost1 = calcualteLogicalAndCost(S.get(i));
+			double cost2 = calculateNoBranchCost(S.get(i));
+			if(cost2<cost1){
+				S.get(i).setC(cost2);
+				S.get(i).setB(true);
+			}
+			else
+				S.get(i).setC(cost1);
+		}
+	}
+	public double calculateNoBranchCost(SubsetNode node) {
+		double cost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + a;
+		return cost;
+	}
+	public double calcualteLogicalAndCost(SubsetNode s){
+		double p = 0; 
+		double q = 0;
+		if (s.getN() * s.getP() <= 0.5){
+			q = s.getP() * s.getN(); //system predicts the branch to the next iteration will be take
+		}else{
+			q = 1 - s.getP() * s.getN();
+		}
+		double cost = s.getN() * r + (s.getN() - 1)* l + s.getN()*f + t + m * q + p* s.getN() * a;
+		return cost;
+	}
+	
+	
 	public void pruneConditionTwoA(SubsetNode left, SubsetNode right) {
 		if (cMetric(left) < cMetric(leftMost(right))) {
 			/* Do nothing */
@@ -181,7 +210,7 @@ public class QueryOptimization {
 	}
 
 	private void createNodes(ArrayList<ArrayList<Double>> sets) {
-		System.out.println("Creting Nodes");
+		System.out.println("Creating Nodes");
 		for (int i = 0; i < sets.size(); i++) {
 			ArrayList<Double> newSet = sets.get(i);
 			double p = 1;
