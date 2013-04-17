@@ -34,7 +34,7 @@ public class QueryOptimization {
 //		System.out.println("NODE.N: " + node.getN());
 //		System.out.println("r: " + r);
 //		System.out.println("a: " + a);
-		double fcost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + a;
+		double fcost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + t;
 //		System.out.println("FCOST: " + fcost);
 		return fcost;
 	}
@@ -58,7 +58,7 @@ public class QueryOptimization {
 	 * there then it returns false. Else if another node dominates left, it will return true.
 	 */
 	public boolean dDominate(SubsetNode left, SubsetNode leftMost) {
-		if (leftMost.getR() == null && leftMost.getL() == null) {
+		if (leftMost.getL() == null && leftMost.getR() == null) {
 			return false;
 		} else if (dMetric(leftMost) > dMetric(left)) {
 			return (true || dDominate(left, leftMost.getR())); 
@@ -90,22 +90,20 @@ public class QueryOptimization {
 	}
 	
 	public void pruneConditionTwoA(SubsetNode left, SubsetNode right) {
-		if (cMetric(left) < cMetric(leftMost(right))) {
+		if (cMetric(left) < cMetric(leftMost(right) )) {
 			/* Do nothing */
-			System.out.println("PRUNED!: CMETRIC");
-			System.out.println(left + "CMETRIC: " + cMetric(left));
-			System.out.println(right+ "CMETRIC: " + cMetric(right));
+//			System.out.println("PRUNED!: CMETRIC");
+//			System.out.println(left + "CMETRIC: " + cMetric(left));
+//			System.out.println(right+ "CMETRIC: " + cMetric(right));
 		} else if (left.getP() <= 0.5 && dDominate(left, leftMost(right))) {
 			/* Do nothing */
-			System.out.println("PRUNED!: DMETRIC");
-			System.out.println(left);
-			System.out.println(right);
+//			System.out.println("PRUNED!: DMETRIC");
+//			System.out.println(left);
+//			System.out.println(right);
 
 		} else {
 			SubsetNode unionNode = nodeUnion(left, right);
-			if (unionNode == null) {
-				System.out.println("UNION NODE IS NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-			}
+
 			double cost = this.calculateFixedCost(left) + m * Math.min(left.getP(), 1-left.getP()) +
 					left.getP() * this.calculateFixedCost(right);
 			if (cost < unionNode.getC()) {
@@ -121,10 +119,8 @@ public class QueryOptimization {
 		System.out.println("Prunning");
 		for (int i = 1; i < S.size(); i ++) {
 			SubsetNode right = S.get(i);
-//			System.out.println(i);
 			for (int j = 1; j < S.size(); j++) {
 				SubsetNode left = S.get(j);
-//				System.out.println(j);
 				Set<Integer> intersection = new HashSet<Integer>(right.getIndices());
 				intersection.retainAll(left.getIndices());
 				if (intersection.size() == 0) {
