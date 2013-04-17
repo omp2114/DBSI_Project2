@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class QueryOptimization {
 	private double[] selectivities;
 	private ArrayList<SubsetNode> S;
-	private int r,t,l,m,f,a,k;
+	private int r,t,l,m,f,a,k, current;
 	private ArrayList<ArrayList<Integer>> indices;
 	public QueryOptimization(ArrayList<Double> s,int R, int T,int L,int M,int F,int A) {
 		selectivities = new double[s.size()];
@@ -24,6 +24,7 @@ public class QueryOptimization {
 		m = M;
 		f = F;
 		a = A;
+		current = 0;
 		createNodes(getSubsets());	
 		System.out.println(Arrays.toString(S.toArray()));
 
@@ -240,9 +241,78 @@ public class QueryOptimization {
 		}
 		Collections.sort(S);
 	}
+	public String outputQueryPlan() {
+		current = 0;
+		String out = "======================================\n";
+		String ifs = "";
+		String branch = "    answer[j] = i;  \n" + "    j += (";
+		out += Arrays.toString(selectivities) + '\n';
+		out += "--------------------------------------\n";
+		out += recursivePrintOp(this.S.get(S.size()-1), ifs, branch) + '\n';
+		out += "--------------------------------------\n";
+		out += "cost = " + this.S.get(S.size()-1) + '\n';
+		return out;
+	}
 	
-	public String printOp() {
-		return S.get(S.size()-1).printOptimalPlan();
+	public String recursivePrintOp(SubsetNode optimal, String ifs, String branch) {
+		String rstring = "";
+		String ifstring = "";
+		if (optimal.getL() == null) {
+			Integer[] indices = optimal.getIndices().toArray(new Integer[optimal.getIndices().size()]);
+			if (ifs.length() >= 2){
+				rstring = "if(" + ifs;
+				for (int ps = 0; ps < current; ps ++) {
+					rstring += ")";
+				}
+				rstring += "{ \n";
+			} 
+			if (optimal.getN() == 1) {
+				ifstring += "t" + (indices[0]) + "[o" + (indices[0]) + "[i]];" ;
+			} else {
+				for (int i = 0; i < optimal.getN(); i++) {
+					
+					// We dont want a final and so we do a condition for i = length-1;
+					if (i == optimal.getN()-1) {
+						ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]]);" ;
+					} else {
+						ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]] & " ;
+					}
+				}
+				if (ifs.length() >= 2){
+					ifstring +=  "\n }";
+				} 
+				//ifstring += ")";
+			}	
+			return rstring + branch + ifstring;
+		}
+		Integer[] indices = optimal.getL().getIndices().toArray(new Integer[optimal.getL().getIndices().size()]);
+
+		if (optimal.getL().getN() == 1) {
+			if (optimal.getR().getL() != null) {
+				ifstring += "t" + + (indices[0]) + "[o" + (indices[0]) +"[i]] && (" ;
+				current ++;
+			} else {
+				ifstring += "t" + + (indices[0]) + "[o" + (indices[0]) +"[i]]" ;
+
+			}
+		} else {
+			ifstring += "(";
+			for (int i = 0; i < optimal.getL().getN(); i++) {
+				// We dont want a final and so we do a condition for i = length-1;
+				if (i == optimal.getL().getN()-1) {
+					ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]]" ;
+				} else {
+					ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]] & " ;
+				}
+			}			
+			ifstring += ")";
+			if (optimal.getR().getL() != null) {
+				ifstring += " && (";
+				current ++;
+			}
+		}	
+	
+		return recursivePrintOp(optimal.getR(), ifs + ifstring , branch);
 	}
 
 }
