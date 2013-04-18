@@ -249,7 +249,7 @@ public class QueryOptimization {
 		if (optimal.getL() == null) {
 			Integer[] indices = optimal.getIndices().toArray(new Integer[optimal.getIndices().size()]);
 			if (ifs.length() >= 2){
-				rstring = "if" + ifs;
+				rstring = "if " + ifs;
 				for (int ps = 0; ps < current; ps ++) {
 					rstring += ")";
 				}
@@ -257,15 +257,15 @@ public class QueryOptimization {
 				rstring += "{ \n";
 			} 
 			if (optimal.getN() == 1) {
-				ifstring += "t" + (indices[0]) + "[o" + (indices[0]) + "[i]];" ;
+				ifstring += "(t" + (indices[0]) + "[o" + (indices[0]) + "[i]];" ;
 			} else {
 				for (int i = 0; i < optimal.getN(); i++) {
 					
 					// We dont want a final and so we do a condition for i = length-1;
 					if (i == optimal.getN()-1) {
-						ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]]);" ;
+						ifstring +=  "t" +  (indices[i]) + "[o" + (indices[i]) +"[i]]);" ;
 					} else {
-						ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]] & " ;
+						ifstring +=  "t" +  (indices[i]) + "[o" + (indices[i]) +"[i]] & " ;
 					}
 				}
 				if (ifs.length() >= 2){
