@@ -43,46 +43,40 @@ public class Tester {
 					configInput.next();
 					configInput.next();
 					r = configInput.nextInt();
-					System.out.println("r is: " + r);
+					
 				} else if (i == 1) {
 					configInput.next();
 					configInput.next();
 					t = configInput.nextInt();
-					System.out.println("t is: " + t);
-
+					
 				} else if (i == 2) {
 					configInput.next();
 					configInput.next();
 					l = configInput.nextInt();
-					System.out.println("l is: " + l);
-
+					
 				} else if (i == 3) {
 					configInput.next();
 					configInput.next();
 					m = configInput.nextInt();
-					System.out.println("m is: " + m);
-
+					
 				} else if (i == 4) {
 					configInput.next();
 					configInput.next();
 					a = configInput.nextInt();
-					System.out.println("a is: " + a);
-
+					
 				} else if (i == 5) {
 					configInput.next();
 					configInput.next();
 					f = configInput.nextInt();
-					System.out.println("f is: " + f);
-
+					
 				}
 			}	
 			// Splits the queries into threads to handle them in parallel
-			//for (int i = 0; i < threadNumber; i++) {
-				Thread newThread = new Optimize(selectivities.get(3),t, l, m, r, f, a);
+			for (int i = 0; i < threadNumber; i++) {
+				Thread newThread = new Optimize(selectivities.get(i),t, l, m, r, f, a);
 				newThread.start();
-		//	}	
+			}	
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

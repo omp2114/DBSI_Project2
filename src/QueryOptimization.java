@@ -26,7 +26,6 @@ public class QueryOptimization {
 		a = A;
 		current = 0;
 		createNodes(getSubsets());	
-		System.out.println(Arrays.toString(S.toArray()));
 
 	}
 	
@@ -114,9 +113,6 @@ public class QueryOptimization {
 			else
 				S.get(i).setC(cost1);
 		}
-		System.out.println("PART ONE-----------------------------------------");
-		System.out.println(this.nodeUnion(S.get(1), S.get(2)));
-		System.out.println(S);
 	}
 	public double calculateNoBranchCost(SubsetNode node) {
 		double cost = node.getN() * r + (node.getN()-1) * r + node.getN()*f + a;
@@ -147,7 +143,7 @@ public class QueryOptimization {
 			/* Do nothing */
 
 		} else if (left.getP() <= 0.5 && dDominate(left, right, leftMost(right))) {
-			System.out.println("PRUNED!");
+			
 			/* Do nothing */
 		} else {
 			SubsetNode unionNode = nodeUnion(left, right);
@@ -164,7 +160,6 @@ public class QueryOptimization {
 		
 	}
 	public void pruneConditionTwo() {
-		System.out.println("Prunning");
 		for (int i = 1; i < S.size(); i ++) {
 			SubsetNode right = S.get(i);
 			for (int j = 1; j < S.size(); j++) {
@@ -176,11 +171,8 @@ public class QueryOptimization {
 				}
 			}
 		}
-		System.out.println("PART TWO-----------------------------------------");
-		System.out.println(S);
 	}
 	public ArrayList<ArrayList<Double>> getSubsets(){
-		System.out.println("Creating substests");
 		ArrayList<ArrayList<Double>> subsets = new ArrayList<ArrayList<Double>>();
 		this.indices = new ArrayList<ArrayList<Integer>>();
 
@@ -190,7 +182,6 @@ public class QueryOptimization {
 		*/
 		int n = (int) Math.pow(2, selectivities.length);
 		int size = Integer.toBinaryString(n).length()-1;
-		System.out.println(Integer.toBinaryString(0).length());
 		String[] temp = new String[n];
 		
 		for (int i = 0; i < n; i++) {
@@ -212,12 +203,10 @@ public class QueryOptimization {
 			subsets.add(current);
 			this.indices.add(currentIndices);
 		}
-		System.out.println("Finished");
 		return subsets;
 	}
 	
 	private void createNodes(ArrayList<ArrayList<Double>> sets) {
-		System.out.println("Creating Nodes");
 		for (int i = 0; i < sets.size(); i++) {
 			ArrayList<Double> newSet = sets.get(i);
 			double p = 1;
@@ -250,7 +239,7 @@ public class QueryOptimization {
 		out += "--------------------------------------\n";
 		out += recursivePrintOp(this.S.get(S.size()-1), ifs, branch) + '\n';
 		out += "--------------------------------------\n";
-		out += "cost = " + this.S.get(S.size()-1) + '\n';
+		out += "cost = " + this.S.get(S.size()-1).getC() ;
 		return out;
 	}
 	
@@ -260,10 +249,11 @@ public class QueryOptimization {
 		if (optimal.getL() == null) {
 			Integer[] indices = optimal.getIndices().toArray(new Integer[optimal.getIndices().size()]);
 			if (ifs.length() >= 2){
-				rstring = "if(" + ifs;
+				rstring = "if" + ifs;
 				for (int ps = 0; ps < current; ps ++) {
 					rstring += ")";
 				}
+				
 				rstring += "{ \n";
 			} 
 			if (optimal.getN() == 1) {
@@ -281,33 +271,40 @@ public class QueryOptimization {
 				if (ifs.length() >= 2){
 					ifstring +=  "\n }";
 				} 
-				//ifstring += ")";
+				String t=" ";
+			
+			
 			}	
+			
 			return rstring + branch + ifstring;
 		}
 		Integer[] indices = optimal.getL().getIndices().toArray(new Integer[optimal.getL().getIndices().size()]);
 
 		if (optimal.getL().getN() == 1) {
 			if (optimal.getR().getL() != null) {
-				ifstring += "t" + + (indices[0]) + "[o" + (indices[0]) +"[i]] && (" ;
+			
+					ifstring += "(t" + + (indices[0]) + "[o" + (indices[0]) +"[i]] && " ;
 				current ++;
 			} else {
 				ifstring += "t" + + (indices[0]) + "[o" + (indices[0]) +"[i]]" ;
 
 			}
 		} else {
-			ifstring += "(";
+			if (optimal.getR().getL() != null) {
+				ifstring += "(";
+			}
+			
 			for (int i = 0; i < optimal.getL().getN(); i++) {
 				// We dont want a final and so we do a condition for i = length-1;
 				if (i == optimal.getL().getN()-1) {
 					ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]]" ;
 				} else {
-					ifstring +=  "t" + + (indices[i]) + "[o" + (indices[i]) +"[i]] & " ;
+					ifstring +=  "(t" + + (indices[i]) + "[o" + (indices[i]) +"[i]] & " ;
 				}
 			}			
 			ifstring += ")";
 			if (optimal.getR().getL() != null) {
-				ifstring += " && (";
+				ifstring += " && ";
 				current ++;
 			}
 		}	

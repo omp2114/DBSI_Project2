@@ -125,7 +125,6 @@ public class SubsetNode implements Comparable {
 		return indices;
 	}
 	
-	
 	/** get left child */
 	public SubsetNode getL(){
 		return L;
@@ -134,143 +133,12 @@ public class SubsetNode implements Comparable {
 	public SubsetNode getR(){
 		return R;
 	}
-	/** get right child */
+	/** get selectivities of node */
 	public double[] getSelectivities(){
 		return selectivities;
 	}
 	
-	public String printOptimalPlan() {
-		String out = "======================================\n";
-		String ifs = "if(";
-		String branch = "answer[j] = i; + '\n'" + "j += ";
-		out += Arrays.toString(selectivities) + '\n';
-		out += "--------------------------------------\n";
-		out += recursivePrint(this, out, 1, branch, ifs, 0);
-		out += "--------------------------------------\n";
-		out += "cost = " + this.c + '\n';
-		return out;
-	}
 	
-	public SubsetNode leftMost(SubsetNode node) {
-		if (node.getL() == null) {
-			return node;
-		} else {
-			return node.getL();
-		}
-	}
-	
-	int noBranch = 0;
-	String out = "if(";
-	int logicalAnd = 0; 
-	
-	
-	private String recursivePrint(SubsetNode optimal, String b, int current, String branch, String ifs, int isLeft) {
-		
-		if(optimal != null){
-			recursivePrint(optimal.getL(), b, current++, branch, ifs, 1);
-			recursivePrint(optimal.getR(), b, current++, branch, ifs, 0);
-			
-		
-			if(optimal.getL() == null && optimal.getR() == null){
-				if(optimal.getSelectivities().length > 1){
-					out += "(";
-					for(int i=0; i<optimal.getSelectivities().length; i++){
-						
-						if(i != optimal.getSelectivities().length -1){
-							if(isLeft == 0){
-								
-								out += optimal.getSelectivities()[i] + " && ";
-							}else{
-								
-								out += optimal.getSelectivities()[i] + " & ";	
-							}
-						}else{
-							
-							out += optimal.getSelectivities()[i];
-						}
-					}
-					out += ")";
-				}else{
-					out += optimal.getSelectivities()[0];
-				}
-				if(current != n)
-					out += " && ";
-				else{
-					out += ")\n";
-				}
-			}
-		}
-		return out;
-		/**
-		if(optimal == null){
-			return out;
-		}
-		recursivePrint(optimal.getL(), out, current--, branch, ifs, noBranch, logicalAnd);
-		if(optimal.b == true){
-			noBranch = 1;
-			
-			for (int i = 0; i < optimal.getN(); i++) {
-				if(i != optimal.getN() - 1)
-					out += "t" + (current + i + 1) + "[o" + (current + i + 1) + "[i]] & ";  
-				else
-					out += "t" + (current + i + 1) + "[o" + (current + i + 1) + "[i]]";  
-
-			}
-		}
-		
-		
-		out += "&&";
-		recursivePrint(optimal.getR(), out, current--, branch, ifs);
-		out += "&&";
-		**/
-		
-	}
-	
-	/**
-	private String recursivePrint(SubsetNode optimal, String out, int current, String branch, String ifs) {
-		if (optimal.getR() == null) {
-			String temp = "answer[j] = i; + '\n'" + "j += ";
-			String cString = "";
-			if (ifs.length() > 3) {
-				cString += ifs + ") {" + '\n';
-			}
-			if (branch.length() > temp.length()) {
-				cString += branch + '\n' + "}";
-			} else {
-				cString += '\n' + "answer[j++] = i; '\n'" + "}"; 
-			}
-			System.out.println("IF STRINGGFGGGGG" + ifs);
-			return cString;
-		}
-		String ifstring = "";
-		String bstring = "";
-		if (this.getB() == true) {
-			for (int i = 0; i < optimal.getN(); i++) {
-				bstring += "t" + (current + i + 1) + "[o" + (current + i + 1) + "[i]] & ";  
-			}
-		} else {
-			System.out.println("MAKING IF");
-			if (optimal.getN() == 1) {
-				ifstring += "t" + + (current + 1) + "[o" + (current + 1) +"[i]] && " ;
-			} else {
-				ifstring += "(";
-				for (int i = 0; i < optimal.getN(); i++) {
-					
-					// We dont want a final and so we do a condition for i = length-1;
-					if (i == optimal.getN()-1) {
-						ifstring +=  "t" + + (current + i+ 1) + "[o" + (current + i + 1) +"[i]]" ;
-					} else {
-						ifstring +=  "t" + + (current + i+ 1) + "[o" + (current + i + 1) +"[i]] & " ;
-					}
-				}
-				ifstring += ") &&";
-			}	
-		}
-		String rif = ifs + ifstring;
-		String rb = branch + bstring;
-		return recursivePrint(optimal.getR(), out, (int)(current + optimal.getN()), rb, rif) ;
-	}**/
-
 	@Override
 	public int compareTo(Object o) {
 		SubsetNode s = (SubsetNode)o;
